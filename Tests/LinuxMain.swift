@@ -1,7 +1,7 @@
 import XCTest
 
-import newton_ios_sdkTests
+import NewtonAuthTests
 
 var tests = [XCTestCaseEntry]()
-tests += newton_ios_sdkTests.allTests()
+tests += NewtonAuthTests.allTests()
 XCTMain(tests)
