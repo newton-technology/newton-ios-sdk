@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import NewtonCore
 
 public struct NewtonAuthentication {
     
@@ -21,7 +20,7 @@ public struct NewtonAuthentication {
     }
 
     public func requestOtp(withPhoneNumber phoneNumber: String) {
-        let httpController = HttpController()
+        let httpController = AuthHttpController.instance
         
         guard let requestUrl = URL(string: "/auth/realms/\(realm)/protocol/openid-connect/token", relativeTo: url) else {
             return
@@ -39,7 +38,7 @@ public struct NewtonAuthentication {
     }
     
     public func confirmOtp(accessToken: String, code: String) {
-        let httpController = HttpController()
+        let httpController = AuthHttpController.instance
         
         guard let requestUrl = URL(string: "/auth/realms/\(realm)/protocol/openid-connect/token", relativeTo: url) else {
             return
@@ -60,7 +59,7 @@ public struct NewtonAuthentication {
     }
     
     public func login(accessToken: String, password: String?) {
-        let httpController = HttpController()
+        let httpController = AuthHttpController.instance
         
         guard let requestUrl = URL(string: "/auth/realms/\(realm)/protocol/openid-connect/token", relativeTo: url) else {
             return

@@ -6,7 +6,3 @@
 //
 
 import Foundation
-
-//public func authentication(url: URL) -> NewtonAuthentication {
-//    return NewtonAuthentication(url: url)
-//}
