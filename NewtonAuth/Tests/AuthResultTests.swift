@@ -10,14 +10,14 @@ import XCTest
 
 final class AuthResultTests: XCTestCase {
     
-    func testDecoding() throws {
+    func test_decode_shouldBeValid() throws {
         let result = try JSONDecoder().decode(AuthResult.self, from: KeycloakAuthResult)
         XCTAssertEqual(result.accessTokenExpiresIn, 300)
         XCTAssertEqual(result.refreshTokenExpiresIn, 1800)
         XCTAssertEqual(result.tokenType, "Bearer")
     }
     
-    func testDecoding_whenMissingAttributes_itThrows() {
+    func test_decode_whenMissingAttributes_itThrows() {
         XCTAssertThrowsError(try JSONDecoder().decode(AuthResult.self, from: KeycloakAuthResultWithMissingToken)) { error in
             if case .keyNotFound(let key, _)? = error as? DecodingError {
                 XCTAssertEqual("access_token", key.stringValue)
@@ -26,11 +26,6 @@ final class AuthResultTests: XCTestCase {
             }
         }
     }
-    
-    static var allTests = [
-        ("testDecoding", testDecoding),
-        ("testDecoding_whenMissingAttributes_itThrows", testDecoding_whenMissingAttributes_itThrows),
-    ]
     
 }
 

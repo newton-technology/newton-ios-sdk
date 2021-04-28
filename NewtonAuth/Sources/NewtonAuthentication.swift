@@ -12,17 +12,19 @@ public struct NewtonAuthentication {
     let url: URL
     let clientId: String
     let realm: String
+    let serviceRealm: String
 
-    public init(url: URL, clientId: String, realm: String) {
+    public init(url: URL, clientId: String, realm: String, serviceRealm: String) {
         self.url = url
         self.clientId = clientId
         self.realm = realm
+        self.serviceRealm = serviceRealm
     }
 
     public func requestOtp(withPhoneNumber phoneNumber: String) {
         let httpController = AuthHttpController.instance
         
-        guard let requestUrl = URL(string: "/auth/realms/\(realm)/protocol/openid-connect/token", relativeTo: url) else {
+        guard let requestUrl = URL(string: "/auth/realms/\(serviceRealm)/protocol/openid-connect/token", relativeTo: url) else {
             return
         }
         
@@ -40,7 +42,7 @@ public struct NewtonAuthentication {
     public func confirmOtp(accessToken: String, code: String) {
         let httpController = AuthHttpController.instance
         
-        guard let requestUrl = URL(string: "/auth/realms/\(realm)/protocol/openid-connect/token", relativeTo: url) else {
+        guard let requestUrl = URL(string: "/auth/realms/\(serviceRealm)/protocol/openid-connect/token", relativeTo: url) else {
             return
         }
         

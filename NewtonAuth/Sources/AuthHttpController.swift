@@ -12,11 +12,42 @@ public class AuthHttpController {
     
     static let instance = AuthHttpController()
     
-    public static let defaultRetryCount = 5
-    public static let defaultRetryDelay = 2
+    private static let defaultRetryCount = 5
+    private static let defaultRetryDelay = 2
     private static let defaultTimeout = 30
     
     private let sessionManager: Session
+    
+    class AuthRequestInterceptor: RequestInterceptor {
+
+        private let retryCount: Int, retryDelay: Int
+
+        init(retryCount: Int = defaultRetryCount, retryDelay: Int = defaultRetryDelay)
+        {
+            self.retryCount = retryCount
+            self.retryDelay = retryDelay
+        }
+
+        public func retry(
+            _ request: Request,
+            for session: Session,
+            dueTo error: Error,
+            completion: @escaping (RetryResult) -> Void)
+        {
+            let response = request.task?.response as? HTTPURLResponse
+
+            if let statusCode = response?.statusCode, (400...499).contains(statusCode) {
+                completion(.doNotRetry)
+                return
+            }
+
+            if request.retryCount < retryCount {
+                completion(.retryWithDelay(TimeInterval(retryDelay)))
+            } else {
+                completion(.doNotRetry)
+            }
+        }
+    }
     
     public init() {
         let configuration = URLSessionConfiguration.default
@@ -30,8 +61,6 @@ public class AuthHttpController {
         headers: [String: String]? = nil,
         parameters: Parameters? = nil,
         encoding: ParameterEncoding = JSONEncoding.default,
-        retryCount: Int = defaultRetryCount,
-        retryDelay: Int = defaultRetryDelay,
         onSuccess: ((_ responseCode: Int, _ responseData: AuthResult?) -> Void)? = nil,
         onError errorHandler: ((_ error: Error, _ responseCode: Int?, _ responseData: AuthError?) -> Void)? = nil
     )
@@ -39,9 +68,10 @@ public class AuthHttpController {
         sessionManager
             .request(
                 url,
-                method: .post,
+                method: method,
                 parameters: parameters,
-                headers: HTTPHeaders(headers ?? [:])
+                headers: HTTPHeaders(headers ?? [:]),
+                interceptor: AuthRequestInterceptor(retryCount: AuthHttpController.defaultRetryCount, retryDelay: AuthHttpController.defaultRetryDelay)
             )
             .validate()
             .responseJSON { (data) in
@@ -59,7 +89,6 @@ public class AuthHttpController {
                             onError: errorHandler)
                         return
                     }
-
                     self.onError(
                         error: error,
                         responseCode: responseCode,
@@ -78,10 +107,14 @@ public class AuthHttpController {
                     )
                     return
                 }
-                
-                let authResult = try? JSONDecoder().decode(AuthResult.self, from: data.value as! Data)
-
                 guard let successHandler = onSuccess else { return }
+                guard
+                    let data = data.data,
+                    let authResult = try? JSONDecoder().decode(AuthResult.self, from: data)
+                else {
+                    successHandler(statusCode, nil)
+                    return
+                }
                 successHandler(statusCode, authResult)
             }
     }
@@ -92,7 +125,7 @@ public class AuthHttpController {
         responseData: AuthError?,
         onError: ((_ error: Error, _ responseCode: Int?, _ responseData: AuthError?) -> Void)? = nil) {
         guard let errorHandler = onError else {
-            // TODO Logging
+            //TODO: Logging
             return
         }
         errorHandler(error, responseCode, responseData)

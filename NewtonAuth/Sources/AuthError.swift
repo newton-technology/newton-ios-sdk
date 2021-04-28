@@ -5,8 +5,11 @@
 //  Created by Mihail Kuznetsov on 28.04.2021.
 //
 
+//TODO: add missing error codes
 enum AuthErrorCode: String, Decodable {
     case unsupportedGrantType = "unsupported_grant_type"
+    case invalidClient = "invalid_client"
+    case invalidRequest = "invalid_request"
     case unknownError
 }
 

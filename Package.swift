@@ -23,23 +23,13 @@ let package = Package(
         // Targets can depend on other targets in this package, and on products in packages this package depends on.
         .target(
             name: "NewtonAuth",
-            dependencies: ["NewtonCore"],
+            dependencies: ["Alamofire"],
             path: "NewtonAuth/Sources"
         ),
         .testTarget(
             name: "NewtonAuthTests",
             dependencies: ["NewtonAuth"],
             path: "NewtonAuth/Tests"
-        ),
-        .target(
-            name: "NewtonCore",
-            dependencies: ["Alamofire"],
-            path: "NewtonCore/Sources"
-        ),
-        .testTarget(
-            name: "NewtonCoreTests",
-            dependencies: ["NewtonCore"],
-            path: "NewtonCore/Tests"
         )
     ]
 )

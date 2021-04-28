@@ -10,24 +10,19 @@ import XCTest
 
 final class AuthErrorTests: XCTestCase {
     
-    func testDecoding() throws {
+    func test_decode_shouldBeValid() throws {
         let authError = try JSONDecoder().decode(AuthError.self, from: AuthGrantTypeError)
         XCTAssertEqual(authError.error, .unsupportedGrantType)
     }
     
-    func testDecoding_whenReceivedUnknownErrorCode() throws {
+    func test_decode_whenReceivedUnknownErrorCode_itThrows() throws {
         let authError = try JSONDecoder().decode(AuthError.self, from: AuthErrorUnknownCode)
         XCTAssertEqual(authError.error, .unknownError)
     }
     
-    func testDecoding_whenMissingAttributes_itThrows() {
+    func test_decode_whenMissingAttributes_itThrows() {
         XCTAssertThrowsError(try JSONDecoder().decode(AuthError.self, from: AuthErrorMissingErrorKey))
     }
-    
-    static var allTests = [
-        ("testDecoding", testDecoding),
-        ("testDecoding_whenMissingAttributes_itThrows", testDecoding_whenMissingAttributes_itThrows)
-    ]
 
 }
 
