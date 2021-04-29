@@ -35,6 +35,7 @@ public struct NewtonAuthentication {
         httpController.request(
             url: requestUrl,
             method: .post,
+            resultModel: AuthResult.self,
             parameters: [
                 "grant_type": "password",
                 "client_id": clientId,
@@ -66,6 +67,7 @@ public struct NewtonAuthentication {
         httpController.request(
             url: requestUrl,
             method: .post,
+            resultModel: AuthResult.self,
             headers: [
                 "Authorization": "Bearer \(accessToken)"
             ],
@@ -108,6 +110,7 @@ public struct NewtonAuthentication {
         httpController.request(
             url: requestUrl,
             method: .post,
+            resultModel: AuthResult.self,
             headers: [
                 "Authorization": "Bearer \(accessToken)"
             ],

@@ -58,6 +58,7 @@ public class AuthHttpController {
     public func request<T: Decodable>(
         url: URL,
         method: HTTPMethod,
+        resultModel: T.Type,
         headers: [String: String]? = nil,
         parameters: Parameters? = nil,
         encoding: ParameterEncoding = JSONEncoding.default,
@@ -110,12 +111,12 @@ public class AuthHttpController {
                 guard let successHandler = onSuccess else { return }
                 guard
                     let data = data.data,
-                    let authResult = try? JSONDecoder().decode(T.self, from: data)
+                    let result = try? JSONDecoder().decode(T.self, from: data)
                 else {
                     successHandler(statusCode, nil)
                     return
                 }
-                successHandler(statusCode, authResult)
+                successHandler(statusCode, result)
             }
     }
     

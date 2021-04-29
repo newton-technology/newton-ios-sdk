@@ -21,7 +21,7 @@ class AuthHttpControllerTests: XCTestCase {
         url = URL(string: "https://keycloak.newton-technology.ru")
         clientId = "tezis"
         serviceRealm = "service"
-        phoneNumber = "+79..."
+        phoneNumber = "+792..."
     }
 
     override func tearDownWithError() throws {
@@ -47,8 +47,10 @@ class AuthHttpControllerTests: XCTestCase {
         httpController.request(
             url: authUrl,
             method: .post,
+            resultModel: AuthResult.self,
             parameters: parameters,
-            onSuccess: { (code, authResult: AuthResult?) in
+            onSuccess: { code, authResult in
+                XCTAssertNotNil(authResult)
                 XCTAssertEqual(authResult?.tokenType, "Bearer")
                 successExcpectation.fulfill()
             }
@@ -58,7 +60,7 @@ class AuthHttpControllerTests: XCTestCase {
     
     func test_request_shouldFailWithUnsupportedGrantType() {
         let httpController = AuthHttpController.instance
-        let successExcpectation = expectation(description: "request success")
+        let successExcpectation = expectation(description: "request fail")
 
         guard
             let realm = serviceRealm,
@@ -76,10 +78,8 @@ class AuthHttpControllerTests: XCTestCase {
         httpController.request(
             url: authUrl,
             method: .post,
+            resultModel: AuthResult.self,
             parameters: parameters,
-            onSuccess: { (code, authResult: AuthResult?) in
-                //
-            },
             onError: { error, code, authError in
                 XCTAssertEqual(authError?.error, .unsupportedGrantType)
                 successExcpectation.fulfill()
@@ -90,7 +90,7 @@ class AuthHttpControllerTests: XCTestCase {
 
     func test_request_shouldFailWithInvalidClient() {
         let httpController = AuthHttpController.instance
-        let successExcpectation = expectation(description: "request success")
+        let successExcpectation = expectation(description: "request fail")
 
         guard
             let realm = serviceRealm,
@@ -107,10 +107,8 @@ class AuthHttpControllerTests: XCTestCase {
         httpController.request(
             url: authUrl,
             method: .post,
+            resultModel: AuthResult.self,
             parameters: parameters,
-            onSuccess: { (code, authResult: AuthResult?) in
-                //
-            },
             onError: { error, code, authError in
                 XCTAssertEqual(authError?.error, .invalidClient)
                 successExcpectation.fulfill()
@@ -121,7 +119,7 @@ class AuthHttpControllerTests: XCTestCase {
     
     func test_request_shouldFailWithInvalidRequest() {
         let httpController = AuthHttpController.instance
-        let successExcpectation = expectation(description: "request success")
+        let successExcpectation = expectation(description: "request fail")
 
         guard
             let realm = serviceRealm,
@@ -132,9 +130,7 @@ class AuthHttpControllerTests: XCTestCase {
         httpController.request(
             url: authUrl,
             method: .post,
-            onSuccess: { (code, authResult: AuthResult?) in
-                //
-            },
+            resultModel: AuthResult.self,
             onError: { error, code, authError in
                 XCTAssertEqual(authError?.error, .invalidRequest)
                 successExcpectation.fulfill()
