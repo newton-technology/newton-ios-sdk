@@ -81,6 +81,7 @@ class AuthHttpControllerTests: XCTestCase {
             resultModel: AuthResult.self,
             parameters: parameters,
             onError: { error, code, authError in
+                XCTAssertNotNil(authError)
                 XCTAssertEqual(authError?.error, .unsupportedGrantType)
                 successExcpectation.fulfill()
             }
@@ -110,6 +111,7 @@ class AuthHttpControllerTests: XCTestCase {
             resultModel: AuthResult.self,
             parameters: parameters,
             onError: { error, code, authError in
+                XCTAssertNotNil(authError)
                 XCTAssertEqual(authError?.error, .invalidClient)
                 successExcpectation.fulfill()
             }
@@ -132,6 +134,7 @@ class AuthHttpControllerTests: XCTestCase {
             method: .post,
             resultModel: AuthResult.self,
             onError: { error, code, authError in
+                XCTAssertNotNil(authError)
                 XCTAssertEqual(authError?.error, .invalidRequest)
                 successExcpectation.fulfill()
             }
