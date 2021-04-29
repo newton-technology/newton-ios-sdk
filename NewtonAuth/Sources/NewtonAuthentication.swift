@@ -21,7 +21,11 @@ public struct NewtonAuthentication {
         self.serviceRealm = serviceRealm
     }
 
-    public func requestOtp(withPhoneNumber phoneNumber: String) {
+    public func requestOtp(
+        withPhoneNumber phoneNumber: String,
+        onSuccess: ((_ authResult: AuthResult) -> Void)? = nil,
+        onError: ((_ authError: AuthError?) -> Void)? = nil
+    ) {
         let httpController = AuthHttpController.instance
         
         guard let requestUrl = URL(string: "/auth/realms/\(serviceRealm)/protocol/openid-connect/token", relativeTo: url) else {
@@ -35,11 +39,24 @@ public struct NewtonAuthentication {
                 "grant_type": "password",
                 "client_id": clientId,
                 "phone_number": phoneNumber
-            ]
+            ],
+            onSuccess: { (code, authResult: AuthResult?) in
+                guard let successHandler = onSuccess, let result = authResult else { return }
+                successHandler(result)
+            },
+            onError: { error, code, authError in
+                guard let errorHandler = onError, let error = authError else { return }
+                errorHandler(error)
+            }
         )
     }
     
-    public func confirmOtp(accessToken: String, code: String) {
+    public func confirmOtp(
+        accessToken: String,
+        code: String,
+        onSuccess: ((_ authResult: AuthResult) -> Void)? = nil,
+        onError: ((_ authError: AuthError?) -> Void)? = nil
+    ) {
         let httpController = AuthHttpController.instance
         
         guard let requestUrl = URL(string: "/auth/realms/\(serviceRealm)/protocol/openid-connect/token", relativeTo: url) else {
@@ -56,11 +73,24 @@ public struct NewtonAuthentication {
                 "grant_type": "password",
                 "client_id": clientId,
                 "code": code
-            ]
+            ],
+            onSuccess: { (code, authResult: AuthResult?) in
+                guard let successHandler = onSuccess, let result = authResult else { return }
+                successHandler(result)
+            },
+            onError: { error, code, authError in
+                guard let errorHandler = onError, let error = authError else { return }
+                errorHandler(error)
+            }
         )
     }
     
-    public func login(accessToken: String, password: String?) {
+    public func login(
+        accessToken: String,
+        password: String?,
+        onSuccess: ((_ authResult: AuthResult) -> Void)? = nil,
+        onError: ((_ authError: AuthError?) -> Void)? = nil
+    ) {
         let httpController = AuthHttpController.instance
         
         guard let requestUrl = URL(string: "/auth/realms/\(realm)/protocol/openid-connect/token", relativeTo: url) else {
@@ -81,7 +111,15 @@ public struct NewtonAuthentication {
             headers: [
                 "Authorization": "Bearer \(accessToken)"
             ],
-            parameters: parameters
+            parameters: parameters,
+            onSuccess: { (code, authResult: AuthResult?) in
+                guard let successHandler = onSuccess, let result = authResult else { return }
+                successHandler(result)
+            },
+            onError: { error, code, authError in
+                guard let errorHandler = onError, let error = authError else { return }
+                errorHandler(error)
+            }
         )
     }
 
