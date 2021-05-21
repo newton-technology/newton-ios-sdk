@@ -175,7 +175,7 @@ public struct NewtonAuthentication {
                     completionHandler.onError(error: AuthError(error: .unknownError, errorDescription: nil))
                     return
                 }
-                let flowState = JwtUtils.decodeAuthFlowState(jwtToken: result.accessToken)
+                let flowState = JWTUtils.decodeAuthFlowState(jwtToken: result.accessToken)
                 completionHandler.onSuccess(authResult: result, authFlowState: flowState)
             },
             onError: { error, code, authError in

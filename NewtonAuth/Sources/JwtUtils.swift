@@ -8,7 +8,7 @@
 import Foundation
 
 
-class JwtUtils {
+class JWTUtils {
 
     public static func decode(jwtToken jwt: String) -> [String: Any] {
         let segments = jwt.components(separatedBy: ".")

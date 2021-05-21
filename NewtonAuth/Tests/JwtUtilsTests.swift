@@ -19,12 +19,12 @@ class JwtUtilsTests: XCTestCase {
     }
 
     func test_decodeToken_shouldBeValid() throws {
-        let decodedToken = JwtUtils.decode(jwtToken: validToken)
+        let decodedToken = JWTUtils.decode(jwtToken: validToken)
         XCTAssertNotNil(decodedToken)
     }
     
     func test_decodeAuthFLowStateFromToken_shouldBeValid() throws {
-        guard let authFlowData = JwtUtils.decodeAuthFlowState(jwtToken: validToken) else {
+        guard let authFlowData = JWTUtils.decodeAuthFlowState(jwtToken: validToken) else {
             XCTFail()
             return
         }
