@@ -21,7 +21,7 @@ class AuthHttpControllerTests: XCTestCase {
         url = URL(string: "https://keycloak.newton-technology.ru")
         clientId = "tezis"
         serviceRealm = "service"
-        phoneNumber = "+792..."
+        phoneNumber = "+79222222222"
     }
 
     override func tearDownWithError() throws {
@@ -53,6 +53,10 @@ class AuthHttpControllerTests: XCTestCase {
                 XCTAssertNotNil(authResult)
                 XCTAssertEqual(authResult?.tokenType, "Bearer")
                 successExcpectation.fulfill()
+            },
+            onError: { error, code, authError in
+                XCTFail("fail with auth error \(String(describing: authError))")
+                successExcpectation.fulfill()
             }
         )
         waitForExpectations(timeout: 5.0, handler: nil)
@@ -71,7 +75,7 @@ class AuthHttpControllerTests: XCTestCase {
             return
         }
         let parameters = [
-            "grant_type": "unknown_grant_type",
+            "grant_type": "unknokn grant type",
             "client_id": client,
             "phone_number": phone
         ]
@@ -80,6 +84,10 @@ class AuthHttpControllerTests: XCTestCase {
             method: .post,
             resultModel: AuthResult.self,
             parameters: parameters,
+            onSuccess: { code, authResult in
+                XCTFail("should not be successful with")
+                successExcpectation.fulfill()
+            },
             onError: { error, code, authError in
                 XCTAssertNotNil(authError)
                 XCTAssertEqual(authError?.error, .unsupportedGrantType)
@@ -110,6 +118,10 @@ class AuthHttpControllerTests: XCTestCase {
             method: .post,
             resultModel: AuthResult.self,
             parameters: parameters,
+            onSuccess: { code, authResult in
+                XCTFail("should not be successful")
+                successExcpectation.fulfill()
+            },
             onError: { error, code, authError in
                 XCTAssertNotNil(authError)
                 XCTAssertEqual(authError?.error, .invalidClient)
@@ -133,6 +145,10 @@ class AuthHttpControllerTests: XCTestCase {
             url: authUrl,
             method: .post,
             resultModel: AuthResult.self,
+            onSuccess: { code, authResult in
+                XCTFail("should not be successful")
+                successExcpectation.fulfill()
+            },
             onError: { error, code, authError in
                 XCTAssertNotNil(authError)
                 XCTAssertEqual(authError?.error, .invalidRequest)

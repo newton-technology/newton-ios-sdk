@@ -5,12 +5,22 @@
 //  Created by Mihail Kuznetsov on 28.04.2021.
 //
 
-//TODO: add missing error codes
 enum AuthErrorCode: String, Decodable {
     case unsupportedGrantType = "unsupported_grant_type"
     case invalidClient = "invalid_client"
     case invalidRequest = "invalid_request"
-    case unknownError
+    case invalidToken = "invalid_token"
+    case notAllowed = "not_allowed"
+    case invalidGrant = "invalid_grant"
+    case passwordMissing = "password_missing"
+    case phoneMissing = "phone_missing"
+    case invalidPhone = "invalid_phone"
+    case codeMissing = "code_missing"
+    case usernameMissing = "username_missing"
+    case usernameInUse = "username_in_use"
+    case emailInUse = "email_in_use"
+    case realmDisabled = "realm_disabled"
+    case unknownError = "unknown_error"
 }
 
 extension AuthErrorCode {

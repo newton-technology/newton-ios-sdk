@@ -11,7 +11,6 @@ public struct AuthResult: Decodable {
     let refreshToken: String
     let refreshTokenExpiresIn: Int
     let tokenType: String
-    let passwordRequired: Bool?
     
     enum CodingKeys: String, CodingKey {
         case accessToken = "access_token"
@@ -19,6 +18,5 @@ public struct AuthResult: Decodable {
         case refreshToken = "refresh_token"
         case refreshTokenExpiresIn = "refresh_expires_in"
         case tokenType = "token_type"
-        case passwordRequired = "password_required"
     }
 }
