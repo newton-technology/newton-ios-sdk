@@ -6,11 +6,11 @@
 //
 
 public struct AuthResult: Decodable {
-    let accessToken: String
-    let accessTokenExpiresIn: Int
-    let refreshToken: String
-    let refreshTokenExpiresIn: Int
-    let tokenType: String
+    public let accessToken: String
+    public let accessTokenExpiresIn: Int
+    public let refreshToken: String
+    public let refreshTokenExpiresIn: Int
+    public let tokenType: String
     
     enum CodingKeys: String, CodingKey {
         case accessToken = "access_token"
