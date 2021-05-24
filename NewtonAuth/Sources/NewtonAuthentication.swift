@@ -61,11 +61,11 @@ public struct NewtonAuthentication {
         previousAuthResult authResult: AuthResult,
         completionHandler: AuthCompletionHandler
     ) {
-        return sendEmailCode(serciveToken: authResult.accessToken, completionHandler: completionHandler)
+        return sendEmailCode(serviceToken: authResult.accessToken, completionHandler: completionHandler)
     }
     
     public func sendEmailCode(
-        serciveToken accessToken: String,
+        serviceToken accessToken: String,
         completionHandler: AuthCompletionHandler
     ) {
         let headers = [
