@@ -152,6 +152,19 @@ public struct NewtonAuthentication {
         }
         return requestMainToken(parameters: parameters, headers: headers, onSuccess: successHandler, onError: errorHandler)
     }
+    
+    public func refreshToken(
+        refreshToken: String,
+        onSuccess successHandler: @escaping ((_ authResult: AuthResult) -> Void),
+        onError errorHandler: @escaping ((_ error: AuthError) -> Void)
+    ) {
+        let parameters = [
+            "client_id": clientId,
+            "grant_type": "refresh_token",
+            "refresh_token": refreshToken
+        ]
+        return requestMainToken(parameters: parameters, headers: [:], onSuccess: successHandler, onError: errorHandler)
+    }
 
     private func requestServiceToken(
         parameters: [String: Any],
@@ -224,4 +237,5 @@ public struct NewtonAuthentication {
             }
         )
     }
+
 }
