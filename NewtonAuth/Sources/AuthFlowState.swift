@@ -24,11 +24,13 @@ public enum LoginStep: String, Decodable {
 public struct AuthFlowState: Decodable {
     public let loginFlow: LoginFlow
     public let loginStep: LoginStep
+    public let phoneNumber: String?
     public let maskedEmail: String?
     
     enum CodingKeys: String, CodingKey {
         case loginFlow = "login_flow"
         case loginStep = "login_step"
+        case phoneNumber = "phone_number"
         case maskedEmail = "masked_email"
     }
 }
