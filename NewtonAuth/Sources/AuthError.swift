@@ -20,6 +20,7 @@ public enum AuthErrorCode: String, Decodable {
     case usernameInUse = "username_in_use"
     case emailInUse = "email_in_use"
     case realmDisabled = "realm_disabled"
+    case codeAlreadySubmitted = "code_already_submitted"
     case unknownError = "unknown_error"
 }
 
