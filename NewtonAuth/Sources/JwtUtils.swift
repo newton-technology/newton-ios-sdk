@@ -7,7 +7,6 @@
 
 import Foundation
 
-
 class JWTUtils {
 
     public static func decode(jwtToken jwt: String) -> [String: Any] {
