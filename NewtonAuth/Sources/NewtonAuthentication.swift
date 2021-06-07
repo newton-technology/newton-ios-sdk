@@ -9,10 +9,10 @@ import Foundation
 
 public struct NewtonAuthentication {
     
-    let url: URL
-    let clientId: String
-    let realm: String
-    let serviceRealm: String
+    private let url: URL
+    private let clientId: String
+    private let realm: String
+    private let serviceRealm: String
 
     public init(url: URL, clientId: String, realm: String, serviceRealm: String) {
         self.url = url
@@ -110,33 +110,33 @@ public struct NewtonAuthentication {
     }
     
     public func login(
-        byAuthResult authResult: AuthResult,
+        withAuthResult authResult: AuthResult,
         onSuccess successHandler: @escaping ((_ authResult: AuthResult) -> Void),
         onError errorHandler: @escaping ((_ error: AuthError) -> Void)
     ) {
-        return login(byServiceToken: authResult.accessToken, withPassword: nil, onSuccess: successHandler, onError: errorHandler)
+        return login(withServiceToken: authResult.accessToken, password: nil, onSuccess: successHandler, onError: errorHandler)
     }
     
     public func login(
-        byAuthResult authResult: AuthResult,
-        withPassword password: String?,
+        withAuthResult authResult: AuthResult,
+        password: String?,
         onSuccess successHandler: @escaping ((_ authResult: AuthResult) -> Void),
         onError errorHandler: @escaping ((_ error: AuthError) -> Void)
     ) {
-        return login(byServiceToken: authResult.accessToken, withPassword: password, onSuccess: successHandler, onError: errorHandler)
+        return login(withServiceToken: authResult.accessToken, password: password, onSuccess: successHandler, onError: errorHandler)
     }
     
     public func login(
-        byServiceToken token: String,
+        withServiceToken token: String,
         onSuccess successHandler: @escaping ((_ authResult: AuthResult) -> Void),
         onError errorHandler: @escaping ((_ error: AuthError) -> Void)
     ) {
-        return login(byServiceToken: token, withPassword: nil, onSuccess: successHandler, onError: errorHandler)
+        return login(withServiceToken: token, password: nil, onSuccess: successHandler, onError: errorHandler)
     }
     
     public func login(
-        byServiceToken token: String,
-        withPassword password: String?,
+        withServiceToken token: String,
+        password: String?,
         onSuccess successHandler: @escaping ((_ authResult: AuthResult) -> Void),
         onError errorHandler: @escaping ((_ error: AuthError) -> Void)
     ) {

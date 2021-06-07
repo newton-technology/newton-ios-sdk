@@ -49,7 +49,7 @@ public class AuthHttpController {
         }
     }
     
-    public init() {
+    private init() {
         let configuration = URLSessionConfiguration.default
         configuration.timeoutIntervalForRequest = TimeInterval(AuthHttpController.defaultTimeout)
         sessionManager = Session(configuration: configuration)
@@ -86,7 +86,10 @@ public class AuthHttpController {
                         self.onError(
                             error: error,
                             responseCode: responseCode,
-                            responseData: AuthError(error: .unknownError, errorDescription: nil),
+                            responseData: AuthError(
+                                error: .unknownError,
+                                errorDescription: "Error: \(data.response?.description ?? "Unknown error")"
+                            ),
                             onError: errorHandler)
                         return
                     }

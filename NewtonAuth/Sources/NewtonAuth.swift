@@ -7,7 +7,6 @@
 
 import Foundation
 
-
 public func authentication(url: String, clientId: String, realm: String, serviceRealm: String) -> NewtonAuthentication {
     let urlString: String
     if !url.hasPrefix("https") {
