@@ -31,7 +31,12 @@ public struct NewtonAuthentication {
             "client_id": clientId,
             "phone_number": phoneNumber
         ]
-        return requestServiceToken(parameters: parameters, onSuccess: successHandler, onError: errorHandler)
+        return requestServiceToken(
+            parameters: parameters,
+            authorizationToken: nil,
+            onSuccess: successHandler,
+            onError: errorHandler
+        )
     }
     
     public func verifyPhone(
@@ -49,15 +54,17 @@ public struct NewtonAuthentication {
         onSuccess successHandler: @escaping ((_ authResult: AuthResult, _ authFlowState: AuthFlowState?) -> Void),
         onError errorHandler: @escaping ((_ error: AuthError) -> Void)
     ) {
-        let headers = [
-            "Authorization": "Bearer \(accessToken)"
-        ]
         let parameters = [
             "grant_type": "password",
             "client_id": clientId,
             "code": code
         ]
-        return requestServiceToken(parameters: parameters, headers: headers, onSuccess: successHandler, onError: errorHandler)
+        return requestServiceToken(
+            parameters: parameters,
+            authorizationToken: accessToken,
+            onSuccess: successHandler,
+            onError: errorHandler
+        )
     }
     
     public func sendEmailCode(
@@ -73,14 +80,16 @@ public struct NewtonAuthentication {
         onSuccess successHandler: @escaping ((_ authResult: AuthResult, _ authFlowState: AuthFlowState?) -> Void),
         onError errorHandler: @escaping ((_ error: AuthError) -> Void)
     ) {
-        let headers = [
-            "Authorization": "Bearer \(accessToken)"
-        ]
         let parameters = [
             "grant_type": "password",
             "client_id": clientId
         ]
-        return requestServiceToken(parameters: parameters, headers: headers, onSuccess: successHandler, onError: errorHandler)
+        return requestServiceToken(
+            parameters: parameters,
+            authorizationToken: accessToken,
+            onSuccess: successHandler,
+            onError: errorHandler
+        )
     }
     
     public func verifyEmail(
@@ -98,15 +107,17 @@ public struct NewtonAuthentication {
         onSuccess successHandler: @escaping ((_ authResult: AuthResult, _ authFlowState: AuthFlowState?) -> Void),
         onError errorHandler: @escaping ((_ error: AuthError) -> Void)
     ) {
-        let headers = [
-            "Authorization": "Bearer \(accessToken)"
-        ]
         let parameters = [
             "grant_type": "password",
             "client_id": clientId,
             "code": code
         ]
-        return requestServiceToken(parameters: parameters, headers: headers, onSuccess: successHandler, onError: errorHandler)
+        return requestServiceToken(
+            parameters: parameters,
+            authorizationToken: accessToken,
+            onSuccess: successHandler,
+            onError: errorHandler
+        )
     }
     
     public func login(
@@ -140,9 +151,6 @@ public struct NewtonAuthentication {
         onSuccess successHandler: @escaping ((_ authResult: AuthResult) -> Void),
         onError errorHandler: @escaping ((_ error: AuthError) -> Void)
     ) {
-        let headers = [
-            "Authorization": "Bearer \(token)"
-        ]
         var parameters = [
             "grant_type": "password",
             "client_id": clientId
@@ -150,7 +158,12 @@ public struct NewtonAuthentication {
         if let password = password {
             parameters["password"] = password
         }
-        return requestMainToken(parameters: parameters, headers: headers, onSuccess: successHandler, onError: errorHandler)
+        return requestMainToken(
+            parameters: parameters,
+            authorizationToken: token,
+            onSuccess: successHandler,
+            onError: errorHandler
+        )
     }
     
     public func refreshToken(
@@ -163,36 +176,39 @@ public struct NewtonAuthentication {
             "grant_type": "refresh_token",
             "refresh_token": refreshToken
         ]
-        return requestMainToken(parameters: parameters, headers: [:], onSuccess: successHandler, onError: errorHandler)
+        return requestMainToken(
+            parameters: parameters,
+            authorizationToken: nil,
+            onSuccess: successHandler,
+            onError: errorHandler
+        )
     }
 
     private func requestServiceToken(
         parameters: [String: Any],
-        headers: [String: String]?,
+        authorizationToken: String?,
         onSuccess successHandler: @escaping ((_ authResult: AuthResult, _ authFlowState: AuthFlowState?) -> Void),
         onError errorHandler: @escaping ((_ error: AuthError) -> Void)
     ) {
-        return requestAccessToken(realm: serviceRealm, parameters: parameters, headers: headers, onSuccess: successHandler, onError: errorHandler)
-    }
-    
-    private func requestServiceToken(
-        parameters: [String: Any],
-        onSuccess successHandler: @escaping ((_ authResult: AuthResult, _ authFlowState: AuthFlowState?) -> Void),
-        onError errorHandler: @escaping ((_ error: AuthError) -> Void)
-    ) {
-        return requestServiceToken(parameters: parameters, headers: nil, onSuccess: successHandler, onError: errorHandler)
+        return requestAccessToken(
+            realm: serviceRealm,
+            parameters: parameters,
+            authorizationToken: authorizationToken,
+            onSuccess: successHandler,
+            onError: errorHandler
+        )
     }
     
     private func requestMainToken(
         parameters: [String: Any],
-        headers: [String: String]?,
+        authorizationToken: String?,
         onSuccess successHandler: @escaping ((_ authResult: AuthResult) -> Void),
         onError errorHandler: @escaping ((_ error: AuthError) -> Void)
     ) {
         return requestAccessToken(
             realm: realm,
             parameters: parameters,
-            headers: headers,
+            authorizationToken: authorizationToken,
             onSuccess: { result, _ in
                 successHandler(result)
             },
@@ -203,7 +219,7 @@ public struct NewtonAuthentication {
     private func requestAccessToken(
         realm: String,
         parameters: [String: Any],
-        headers: [String: String]?,
+        authorizationToken: String?,
         onSuccess successHandler: @escaping ((_ authResult: AuthResult, _ authFlowState: AuthFlowState?) -> Void),
         onError errorHandler: @escaping ((_ error: AuthError) -> Void)
     ) {
@@ -212,7 +228,10 @@ public struct NewtonAuthentication {
         guard let requestUrl = URL(string: "/auth/realms/\(realm)/protocol/openid-connect/token", relativeTo: url) else {
             return
         }
-        
+        var headers: [String: String]? = nil
+        if let token = authorizationToken {
+            headers = ["Authorization": "Bearer \(token)"]
+        }
         httpController.request(
             url: requestUrl,
             method: .post,
@@ -230,6 +249,10 @@ public struct NewtonAuthentication {
             onError: { error, code, authError in
                 guard let error = authError else {
                     errorHandler(AuthError(error: .unknownError, errorDescription: nil))
+                    return
+                }
+                if error.error == .invalidGrant, let token = authorizationToken, JWTUtils.jwtExpired(jwt: token) {
+                    errorHandler(AuthError(error: .tokenExpired, errorDescription: "Auth token expired"))
                     return
                 }
                 errorHandler(error)
