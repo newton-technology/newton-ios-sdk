@@ -51,7 +51,7 @@ class JWTUtils {
      
      - parameter jwt: a JSON web token string
      
-     - returns returns true if jwt is expired
+     - returns true if jwt is expired
      */
     public static func jwtExpired(jwt: String) -> Bool {
         let decoded = decode(jwtToken: jwt)
