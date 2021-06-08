@@ -21,7 +21,10 @@ class JWTUtils {
      */
     public static func decode(jwtToken jwt: String) -> [String: Any] {
         let segments = jwt.components(separatedBy: ".")
-        return decodeJWTPart(segments[1]) ?? [:]
+        if (segments.count > 1) {
+            return decodeJWTPart(segments[1]) ?? [:]
+        }
+        return [:]
     }
     
     /**
@@ -41,6 +44,22 @@ class JWTUtils {
         } catch {
             return nil
         }
+    }
+    
+    /**
+     Check if given JWT is expired
+     
+     - parameter jwt: a JSON web token string
+     
+     - returns returns true if jwt is expired
+     */
+    public static func jwtExpired(jwt: String) -> Bool {
+        let decoded = decode(jwtToken: jwt)
+        guard let exp = decoded["exp"] as? TimeInterval else {
+            return false
+        }
+        let expDate = Date(timeIntervalSince1970: exp)
+        return expDate < Date()
     }
 
     private static func base64UrlDecode(_ value: String) -> Data? {

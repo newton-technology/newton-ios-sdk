@@ -37,6 +37,8 @@ public enum AuthErrorCode: String, Decodable {
     case realmDisabled = "realm_disabled"
     /// Code was recently submitted
     case codeAlreadySubmitted = "code_already_submitted"
+    ///JWT token expired
+    case tokenExpired = "token_expired"
     /// Error is unknown
     case unknownError = "unknown_error"
 }

@@ -32,6 +32,11 @@ class JwtUtilsTests: XCTestCase {
         XCTAssertEqual(authFlowData.loginFlow, .short)
         XCTAssertEqual(authFlowData.loginStep, .verifyPhoneCode)
     }
+    
+    func test_jwtExpired_shouldBeTrue() {
+        let jwtExpired = JWTUtils.jwtExpired(jwt: validToken)
+        XCTAssertTrue(jwtExpired, "token not expired")
+    }
 
 }
 
