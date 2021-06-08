@@ -5,6 +5,7 @@
 //  Created by Mihail Kuznetsov on 28.04.2021.
 //
 
+// Newton authentication success result
 public struct AuthResult: Decodable {
     public let accessToken: String
     public let accessTokenExpiresIn: Int

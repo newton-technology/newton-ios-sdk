@@ -9,11 +9,28 @@ import Foundation
 
 class JWTUtils {
 
+    /**
+     Decode JSON web token
+     ```
+     decode(jwt: VALID_JWT)
+     ```
+     
+     - parameter jwt: a JSON web token string
+     
+     - returns JWT decoded into a dictionary
+     */
     public static func decode(jwtToken jwt: String) -> [String: Any] {
         let segments = jwt.components(separatedBy: ".")
         return decodeJWTPart(segments[1]) ?? [:]
     }
     
+    /**
+     Decode Auth flow state from JWT
+     
+     - parameter jwt: a JSON web token string
+     
+     - returns JWT decoded into a an Auth flow state object or nil if JWT is not a valid Newton Keycloak service token
+     */
     public static func decodeAuthFlowState(jwtToken jwt: String) -> AuthFlowState? {
         let segments = jwt.components(separatedBy: ".")
         guard let bodyData = base64UrlDecode(segments[1]) else {
