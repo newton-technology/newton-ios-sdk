@@ -21,10 +21,11 @@ class JWTUtils {
      */
     public static func decode(jwtToken jwt: String) -> [String: Any] {
         let segments = jwt.components(separatedBy: ".")
-        if (segments.count > 1) {
-            return decodeJWTPart(segments[1]) ?? [:]
+        if (segments.count != 3) {
+            // TODO: log warning
+            return [:]
         }
-        return [:]
+        return decodeJWTPart(segments[1]) ?? [:]
     }
     
     /**
