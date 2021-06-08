@@ -200,7 +200,6 @@ public struct NewtonAuthentication {
         )
     }
 
-    
     private func requestAccessToken(
         realm: String,
         parameters: [String: Any],
