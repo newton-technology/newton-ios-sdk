@@ -197,6 +197,68 @@ public struct NewtonAuthentication {
         )
     }
     
+    /**
+     Newton Authentication logout with revoking every refresh token for the user
+     
+     ```
+     NewtonAuthentication.logout(withAccessToken: accessToken, onSuccess: successHandler, onError: errorHandler)
+     ```
+     
+     - parameter withAccessToken: valid and active access token for main realm
+     - parameter onSuccess: success callback
+     - parameter onError: error callback
+     
+     - returns NewtonAuthentication
+     */
+    public func logout(
+        withAccessToken accessToken: String,
+        onSuccess successHandler: @escaping (() -> Void),
+        onError errorHandler: @escaping ((_ error: AuthError) -> Void)
+    ) {
+        guard let requestUrl = URL(string: "/auth/realms/\(realm)/users/logout", relativeTo: url) else {
+            return
+        }
+        requestAdditional(
+            url: requestUrl,
+            parameters: [:],
+            authorizationToken: accessToken,
+            onSuccess: successHandler,
+            onError: errorHandler
+        )
+    }
+    
+    /**
+     Newton Authentication change user password
+     
+     ```
+     NewtonAuthentication.changePassword(withAccessToken: accessToken, newPassword: password, onSuccess: successHandler, onError: errorHandler)
+     ```
+     
+     - parameter withAccessToken: valid and active access token for main realm
+     - parameter newPassword: new user password
+     - parameter onSuccess: success callback
+     - parameter onError: error callback
+     
+     - returns NewtonAuthentication
+     */
+    public func changePassword(
+        withAccessToken accessToken: String,
+        newPassword password: String,
+        onSuccess successHandler: @escaping (() -> Void),
+        onError errorHandler: @escaping ((_ error: AuthError) -> Void)
+    ) {
+        guard let requestUrl = URL(string: "/auth/realms/\(realm)/users/password", relativeTo: url) else {
+            return
+        }
+        requestAdditional(
+            url: requestUrl,
+            parameters: ["password": password],
+            authorizationToken: accessToken,
+            onSuccess: successHandler,
+            onError: errorHandler
+        )
+    }
+    
     public func refreshToken(
         refreshToken: String,
         onSuccess successHandler: @escaping ((_ authResult: AuthResult) -> Void),
@@ -259,15 +321,12 @@ public struct NewtonAuthentication {
         guard let requestUrl = URL(string: "/auth/realms/\(realm)/protocol/openid-connect/token", relativeTo: url) else {
             return
         }
-        var headers: [String: String]? = nil
-        if let token = authorizationToken {
-            headers = ["Authorization": "Bearer \(token)"]
-        }
+
         httpController.request(
             url: requestUrl,
             method: .post,
             resultModel: AuthResult.self,
-            headers: headers,
+            headers: getAuthorizationHeaders(authorizationToken: authorizationToken),
             parameters: parameters,
             onSuccess: { (code, authResult: AuthResult?) in
                 guard let result = authResult else {
@@ -289,6 +348,41 @@ public struct NewtonAuthentication {
                 errorHandler(error)
             }
         )
+    }
+    
+    private func requestAdditional(
+        url: URL,
+        parameters: [String: Any],
+        authorizationToken: String?,
+        onSuccess successHandler: @escaping (() -> Void),
+        onError errorHandler: @escaping ((_ error: AuthError) -> Void)
+    ) {
+        let httpController = AuthHttpController.instance
+
+        httpController.request(
+            url: url,
+            method: .post,
+            resultModel: AuthResult.self,
+            headers: getAuthorizationHeaders(authorizationToken: authorizationToken),
+            parameters: parameters,
+            onSuccess: { _, _ in
+                successHandler()
+            },
+            onError: { error, code, authError in
+                guard let error = authError else {
+                    errorHandler(AuthError(error: .unknownError, errorDescription: nil))
+                    return
+                }
+                errorHandler(error)
+            }
+        )
+    }
+    
+    private func getAuthorizationHeaders(authorizationToken: String?) -> [String:String]? {
+        guard let token = authorizationToken else {
+            return nil
+        }
+        return ["Authorization": "Bearer \(token)"]
     }
 
 }
