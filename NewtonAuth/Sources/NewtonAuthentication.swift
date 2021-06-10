@@ -120,6 +120,37 @@ public struct NewtonAuthentication {
         )
     }
     
+    /**
+     Newton Authentication request password reset with token from previous step
+     
+     ```
+     NewtonAuthentication.requestPasswordReset(serviceToken: accessToken, onSuccess: successHandler, onError: errorHandler)
+     ```
+     
+     - parameter serviceToken: service token from previous step (e.g. "Verify phone code")
+     - parameter onSuccess: success callback which should result in setting current auth flow to "Normal with email" with current step set to "Send email code"
+     - parameter onError: error callback
+     
+     - returns NewtonAuthentication
+     */
+    public func requestPasswordReset(
+        serviceToken accessToken: String,
+        onSuccess successHandler: @escaping ((_ authResult: AuthResult, _ authFlowState: AuthFlowState?) -> Void),
+        onError errorHandler: @escaping ((_ error: AuthError) -> Void)
+    ) {
+        let parameters = [
+            "grant_type": "password",
+            "client_id": clientId,
+            "reset_password": "1"
+        ]
+        return requestServiceToken(
+            parameters: parameters,
+            authorizationToken: accessToken,
+            onSuccess: successHandler,
+            onError: errorHandler
+        )
+    }
+    
     public func login(
         withAuthResult authResult: AuthResult,
         onSuccess successHandler: @escaping ((_ authResult: AuthResult) -> Void),
