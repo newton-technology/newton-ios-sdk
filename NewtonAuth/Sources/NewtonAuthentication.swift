@@ -141,9 +141,9 @@ public struct NewtonAuthentication {
         let parameters = [
             "grant_type": "password",
             "client_id": clientId,
-            "reset_password": "1"
+            "reset_password": "true"
         ]
-        return requestServiceToken(
+        requestServiceToken(
             parameters: parameters,
             authorizationToken: accessToken,
             onSuccess: successHandler,
