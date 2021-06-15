@@ -198,36 +198,6 @@ public struct NewtonAuthentication {
     }
     
     /**
-     Newton Authentication logout with revoking every refresh token for the user
-     
-     ```
-     NewtonAuthentication.logout(withAccessToken: accessToken, onSuccess: successHandler, onError: errorHandler)
-     ```
-     
-     - parameter withAccessToken: valid and active access token for main realm
-     - parameter onSuccess: success callback
-     - parameter onError: error callback
-     
-     - returns NewtonAuthentication
-     */
-    public func logout(
-        withAccessToken accessToken: String,
-        onSuccess successHandler: @escaping (() -> Void),
-        onError errorHandler: @escaping ((_ error: AuthError) -> Void)
-    ) {
-        guard let requestUrl = URL(string: "/auth/realms/\(realm)/users/logout", relativeTo: url) else {
-            return
-        }
-        requestAdditional(
-            url: requestUrl,
-            parameters: [:],
-            authorizationToken: accessToken,
-            onSuccess: successHandler,
-            onError: errorHandler
-        )
-    }
-    
-    /**
      Newton Authentication change user password
      
      ```
