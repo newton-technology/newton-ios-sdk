@@ -138,10 +138,10 @@ public struct NewtonAuthentication {
         onSuccess successHandler: @escaping ((_ authResult: AuthResult, _ authFlowState: AuthFlowState?) -> Void),
         onError errorHandler: @escaping ((_ error: AuthError) -> Void)
     ) {
-        let parameters = [
+        let parameters: [String: Any] = [
             "grant_type": "password",
             "client_id": clientId,
-            "reset_password": "true"
+            "reset_password": true
         ]
         requestServiceToken(
             parameters: parameters,
