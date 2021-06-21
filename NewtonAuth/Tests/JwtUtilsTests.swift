@@ -31,8 +31,8 @@ class JwtUtilsTests: XCTestCase {
         XCTAssertNotNil(authFlowData)
         XCTAssertEqual(authFlowData.loginFlow, .normal)
         XCTAssertEqual(authFlowData.loginStep, .verifyPhoneCode)
+        XCTAssertEqual(authFlowData.codeCanBeResubmittedTimestamp, 1624000787)
         let date = Date(timeIntervalSince1970: authFlowData.codeCanBeResubmittedTimestamp!)
-        XCTAssertEqual(date.timeIntervalSince1970, authFlowData.codeCanBeResubmittedTimestamp)
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy"
         let yearString = dateFormatter.string(from: date)
