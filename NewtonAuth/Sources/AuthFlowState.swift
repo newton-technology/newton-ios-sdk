@@ -41,11 +41,17 @@ public struct AuthFlowState: Decodable {
     public let phoneNumber: String?
     /// Masked email value
     public let maskedEmail: String?
+    /// Timestamp when code can be resubmitted
+    public let codeCanBeResubmittedTimestamp: TimeInterval?
+    /// Timestamp when code can be resubmitted
+    public let codeExpiresTimestamp: TimeInterval?
     
     enum CodingKeys: String, CodingKey {
         case loginFlow = "login_flow"
         case loginStep = "login_step"
         case phoneNumber = "phone_number"
         case maskedEmail = "masked_email"
+        case codeCanBeResubmittedTimestamp = "code_can_be_resubmitted_timestamp"
+        case codeExpiresTimestamp = "code_expires_timestamp"
     }
 }

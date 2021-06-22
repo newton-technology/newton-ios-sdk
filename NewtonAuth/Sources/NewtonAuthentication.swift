@@ -120,6 +120,37 @@ public struct NewtonAuthentication {
         )
     }
     
+    /**
+     Newton Authentication request password reset with token from previous step
+     
+     ```
+     NewtonAuthentication.requestPasswordReset(serviceToken: accessToken, onSuccess: successHandler, onError: errorHandler)
+     ```
+     
+     - parameter serviceToken: service token from previous step (e.g. "Verify phone code")
+     - parameter onSuccess: success callback which should result in setting current auth flow to "Normal with email" with current step set to "Send email code"
+     - parameter onError: error callback
+     
+     - returns NewtonAuthentication
+     */
+    public func requestPasswordReset(
+        serviceToken accessToken: String,
+        onSuccess successHandler: @escaping ((_ authResult: AuthResult, _ authFlowState: AuthFlowState?) -> Void),
+        onError errorHandler: @escaping ((_ error: AuthError) -> Void)
+    ) {
+        let parameters: [String: Any] = [
+            "grant_type": "password",
+            "client_id": clientId,
+            "reset_password": true
+        ]
+        requestServiceToken(
+            parameters: parameters,
+            authorizationToken: accessToken,
+            onSuccess: successHandler,
+            onError: errorHandler
+        )
+    }
+    
     public func login(
         withAuthResult authResult: AuthResult,
         onSuccess successHandler: @escaping ((_ authResult: AuthResult) -> Void),
@@ -165,7 +196,7 @@ public struct NewtonAuthentication {
             onError: errorHandler
         )
     }
-    
+
     public func refreshToken(
         refreshToken: String,
         onSuccess successHandler: @escaping ((_ authResult: AuthResult) -> Void),
@@ -198,7 +229,7 @@ public struct NewtonAuthentication {
             onError: errorHandler
         )
     }
-    
+
     private func requestMainToken(
         parameters: [String: Any],
         authorizationToken: String?,
@@ -228,15 +259,12 @@ public struct NewtonAuthentication {
         guard let requestUrl = URL(string: "/auth/realms/\(realm)/protocol/openid-connect/token", relativeTo: url) else {
             return
         }
-        var headers: [String: String]? = nil
-        if let token = authorizationToken {
-            headers = ["Authorization": "Bearer \(token)"]
-        }
+
         httpController.request(
             url: requestUrl,
             method: .post,
             resultModel: AuthResult.self,
-            headers: headers,
+            headers: getAuthorizationHeaders(authorizationToken: authorizationToken),
             parameters: parameters,
             onSuccess: { (code, authResult: AuthResult?) in
                 guard let result = authResult else {
@@ -258,6 +286,13 @@ public struct NewtonAuthentication {
                 errorHandler(error)
             }
         )
+    }
+
+    private func getAuthorizationHeaders(authorizationToken: String?) -> [String:String]? {
+        guard let token = authorizationToken else {
+            return nil
+        }
+        return ["Authorization": "Bearer \(token)"]
     }
 
 }
