@@ -75,16 +75,56 @@ public struct NewtonAuthentication {
         return sendEmailCode(serviceToken: authResult.accessToken, onSuccess: successHandler, onError: errorHandler)
     }
     
+    
+    /**
+     Newton Authentication send email code with token from previous step for users who alreasy have email
+     
+     ```
+     NewtonAuthentication.sendEmailCode(serviceToken: accessToken, onSuccess: successHandler, onError: errorHandler)
+     ```
+     
+     - parameter serviceToken: service token from previous step (e.g. "Verify phone code")
+     - parameter onSuccess: success callback which should result in setting current auth flow to "Normal with email" with current step set to "Send email code"
+     - parameter onError: error callback
+     
+     - returns NewtonAuthentication
+     */
     public func sendEmailCode(
         serviceToken accessToken: String,
         onSuccess successHandler: @escaping ((_ authResult: AuthResult, _ authFlowState: AuthFlowState?) -> Void),
         onError errorHandler: @escaping ((_ error: AuthError) -> Void)
     ) {
-        let parameters = [
+        sendEmailCode(toEmail: nil, serviceToken: accessToken, onSuccess: successHandler, onError: errorHandler)
+    }
+    
+    /**
+     Newton Authentication send email code with user email and token
+     
+     ```
+     NewtonAuthentication.sendEmailCode(forEmail: email, serviceToken: accessToken, onSuccess: successHandler, onError: errorHandler)
+     ```
+     
+     - parameter toEmail: user email if needed
+     - parameter serviceToken: service or main token
+     - parameter onSuccess: success callback which should result in setting current auth flow to "Normal with email" with current step set to "Send email code"
+     - parameter onError: error callback
+     
+     - returns NewtonAuthentication
+     */
+    public func sendEmailCode(
+        toEmail email: String?,
+        serviceToken accessToken: String,
+        onSuccess successHandler: @escaping ((_ authResult: AuthResult, _ authFlowState: AuthFlowState?) -> Void),
+        onError errorHandler: @escaping ((_ error: AuthError) -> Void)
+    ) {
+        var parameters = [
             "grant_type": "password",
             "client_id": clientId
         ]
-        return requestServiceToken(
+        if let email = email {
+            parameters["email"] = email
+        }
+        requestServiceToken(
             parameters: parameters,
             authorizationToken: accessToken,
             onSuccess: successHandler,
