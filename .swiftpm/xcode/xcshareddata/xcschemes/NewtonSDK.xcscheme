@@ -48,6 +48,20 @@
                ReferencedContainer = "container:">
             </BuildableReference>
          </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "NewtonCore"
+               BuildableName = "NewtonCore"
+               BlueprintName = "NewtonCore"
+               ReferencedContainer = "container:">
+            </BuildableReference>
+         </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction
@@ -73,6 +87,16 @@
                BlueprintIdentifier = "NewtonAuthTests"
                BuildableName = "NewtonAuthTests"
                BlueprintName = "NewtonAuthTests"
+               ReferencedContainer = "container:">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "NewtonCoreTests"
+               BuildableName = "NewtonCoreTests"
+               BlueprintName = "NewtonCoreTests"
                ReferencedContainer = "container:">
             </BuildableReference>
          </TestableReference>
