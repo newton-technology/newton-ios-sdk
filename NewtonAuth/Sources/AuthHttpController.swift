@@ -36,7 +36,7 @@ public class AuthHttpController {
         {
             let response = request.task?.response as? HTTPURLResponse
 
-            if let statusCode = response?.statusCode, (400...499).contains(statusCode) {
+            if let statusCode = response?.statusCode, (400...500).contains(statusCode) {
                 completion(.doNotRetry)
                 return
             }
@@ -79,6 +79,17 @@ public class AuthHttpController {
                 let responseCode = data.response?.statusCode
 
                 if let error = data.error {
+                    if (error.responseCode == 500) {
+                        self.onError(
+                            error: error,
+                            responseCode: responseCode,
+                            responseData: AuthError(
+                                error: .serverError,
+                                errorDescription: "Error: \(data.response?.description ?? "Server error")"
+                            ),
+                            onError: errorHandler)
+                        return
+                    }
                     guard
                         let data = data.data,
                         let responseData = try? JSONDecoder().decode(AuthError.self, from: data)
