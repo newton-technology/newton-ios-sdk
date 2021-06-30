@@ -41,6 +41,8 @@ public enum AuthErrorCode: String, Decodable {
     case tokenExpired = "token_expired"
     /// Error is unknown
     case unknownError = "unknown_error"
+    /// Server error
+    case serverError = "server_error"
 }
 
 extension AuthErrorCode {
