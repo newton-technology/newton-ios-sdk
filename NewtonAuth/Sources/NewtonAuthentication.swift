@@ -94,7 +94,7 @@ public struct NewtonAuthentication {
         onSuccess successHandler: @escaping ((_ authResult: AuthResult, _ authFlowState: AuthFlowState?) -> Void),
         onError errorHandler: @escaping ((_ error: AuthError) -> Void)
     ) {
-        sendEmailCode(toEmail: nil, resetPassword: false, serviceToken: accessToken, onSuccess: successHandler, onError: errorHandler)
+        sendEmailCode(toEmail: nil, serviceToken: accessToken, onSuccess: successHandler, onError: errorHandler)
     }
     
     /**
@@ -105,7 +105,6 @@ public struct NewtonAuthentication {
      ```
      
      - parameter toEmail: user email if needed
-     - parameter resetPassword: request password reset
      - parameter serviceToken: service or main token
      - parameter onSuccess: success callback which should result in setting current auth flow to "Normal with email" with current step set to "Send email code"
      - parameter onError: error callback
@@ -114,20 +113,16 @@ public struct NewtonAuthentication {
      */
     public func sendEmailCode(
         toEmail email: String?,
-        resetPassword: Bool,
         serviceToken accessToken: String,
         onSuccess successHandler: @escaping ((_ authResult: AuthResult, _ authFlowState: AuthFlowState?) -> Void),
         onError errorHandler: @escaping ((_ error: AuthError) -> Void)
     ) {
-        var parameters: [String: Any] = [
+        var parameters = [
             "grant_type": "password",
             "client_id": clientId
         ]
         if let email = email {
             parameters["email"] = email
-        }
-        if resetPassword {
-            parameters["reset_password"] = true
         }
         requestServiceToken(
             parameters: parameters,
