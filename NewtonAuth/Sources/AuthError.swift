@@ -43,6 +43,8 @@ public enum AuthErrorCode: String, Decodable {
     case unknownError = "unknown_error"
     /// Server error
     case serverError = "server_error"
+    /// One time password attemtps exceeded
+    case attemptsOtpCheckExceeded = "attempts_otp_check_exceeded"
 }
 
 extension AuthErrorCode {
