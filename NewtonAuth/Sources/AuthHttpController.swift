@@ -91,8 +91,8 @@ public class AuthHttpController {
                         return
                     }
                     guard
-                        let data = data.data,
-                        let responseData = try? JSONDecoder().decode(AuthError.self, from: data)
+                        let errorData = data.data,
+                        let responseData = try? JSONDecoder().decode(AuthError.self, from: errorData)
                     else {
                         self.onError(
                             error: error,
@@ -124,8 +124,8 @@ public class AuthHttpController {
                 }
                 guard let successHandler = onSuccess else { return }
                 guard
-                    let data = data.data,
-                    let result = try? JSONDecoder().decode(T.self, from: data)
+                    let resultData = data.data,
+                    let result = try? JSONDecoder().decode(T.self, from: resultData)
                 else {
                     successHandler(statusCode, nil)
                     return
