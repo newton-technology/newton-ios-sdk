@@ -32,11 +32,23 @@ class JwtUtilsTests: XCTestCase {
         XCTAssertEqual(authFlowData.loginFlow, .normal)
         XCTAssertEqual(authFlowData.loginStep, .verifyPhoneCode)
         XCTAssertEqual(authFlowData.codeCanBeResubmittedTimestamp, 1624000787)
+        XCTAssertNotNil(authFlowData.codeCanBeResubmittedTimestamp)
         let date = Date(timeIntervalSince1970: authFlowData.codeCanBeResubmittedTimestamp!)
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy"
         let yearString = dateFormatter.string(from: date)
         XCTAssertEqual(yearString, "2021")
+    }
+    
+    func test_decodeAuthFLowStateFromTokenWithHeaderData_shouldBeValid() throws {
+        let headerData = ["Date": "Mon, 17 Jan 2022 12:04:43 GMT"]
+        guard let authFlowData = JWTUtils.decodeAuthFlowState(jwtToken: validToken, headerData: headerData) else {
+            XCTFail()
+            return
+        }
+        XCTAssertNotNil(authFlowData)
+        XCTAssertNotNil(authFlowData.codeCanBeResubmittedTimestamp)
+        XCTAssertNotEqual(authFlowData.codeCanBeResubmittedTimestamp, authFlowData.codeCanBeResubmittedTimestampFromData)
     }
     
     func test_jwtExpired_shouldBeTrue() {

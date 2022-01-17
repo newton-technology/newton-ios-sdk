@@ -47,9 +47,8 @@ class AuthHttpControllerTests: XCTestCase {
         httpController.request(
             url: authUrl,
             method: .post,
-            resultModel: AuthResult.self,
             parameters: parameters,
-            onSuccess: { code, authResult in
+            onSuccess: { code, authResult, headerData in
                 XCTAssertNotNil(authResult)
                 XCTAssertEqual(authResult?.tokenType, "Bearer")
                 successExcpectation.fulfill()
@@ -82,9 +81,8 @@ class AuthHttpControllerTests: XCTestCase {
         httpController.request(
             url: authUrl,
             method: .post,
-            resultModel: AuthResult.self,
             parameters: parameters,
-            onSuccess: { code, authResult in
+            onSuccess: { code, authResult, headerData in
                 XCTFail("should not be successful with")
                 successExcpectation.fulfill()
             },
@@ -116,9 +114,8 @@ class AuthHttpControllerTests: XCTestCase {
         httpController.request(
             url: authUrl,
             method: .post,
-            resultModel: AuthResult.self,
             parameters: parameters,
-            onSuccess: { code, authResult in
+            onSuccess: { code, authResult, headerData in
                 XCTFail("should not be successful")
                 successExcpectation.fulfill()
             },
@@ -144,8 +141,7 @@ class AuthHttpControllerTests: XCTestCase {
         httpController.request(
             url: authUrl,
             method: .post,
-            resultModel: AuthResult.self,
-            onSuccess: { code, authResult in
+            onSuccess: { code, authResult, headerData in
                 XCTFail("should not be successful")
                 successExcpectation.fulfill()
             },
@@ -156,5 +152,39 @@ class AuthHttpControllerTests: XCTestCase {
             }
         )
         waitForExpectations(timeout: 20.0, handler: nil)
+    }
+    
+    func test_request_shouldBeSuccessfulWithValidLocalExpirationTime() {
+        let httpController = AuthHttpController.instance
+        let successExcpectation = expectation(description: "request success")
+        guard
+            let realm = serviceRealm,
+            let client = clientId,
+            let phone = phoneNumber,
+            let authUrl = URL(string: "/auth/realms/\(realm)/protocol/openid-connect/token", relativeTo: url)
+        else {
+            return
+        }
+        let parameters = [
+            "grant_type": "password",
+            "client_id": client,
+            "phone_number": phone
+        ]
+        httpController.request(
+            url: authUrl,
+            method: .post,
+            parameters: parameters,
+            onSuccess: { code, authResult, headerData in
+                XCTAssertNotNil(authResult)
+                XCTAssertEqual(authResult?.tokenType, "Bearer")
+                XCTAssertNotNil(authResult?.localExpirationTime)
+                successExcpectation.fulfill()
+            },
+            onError: { error, code, authError in
+                XCTFail("fail with auth error \(String(describing: authError))")
+                successExcpectation.fulfill()
+            }
+        )
+        waitForExpectations(timeout: 5.0, handler: nil)
     }
 }

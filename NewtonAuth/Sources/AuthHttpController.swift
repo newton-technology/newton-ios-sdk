@@ -55,14 +55,13 @@ public class AuthHttpController {
         sessionManager = Session(configuration: configuration)
     }
     
-    public func request<T: Decodable>(
+    public func request(
         url: URL,
         method: HTTPMethod,
-        resultModel: T.Type,
         headers: [String: String]? = nil,
         parameters: Parameters? = nil,
         encoding: ParameterEncoding = JSONEncoding.default,
-        onSuccess: ((_ responseCode: Int, _ responseData: T?) -> Void)? = nil,
+        onSuccess: ((_ responseCode: Int, _ responseData: AuthResult?, _ headerData: [AnyHashable: Any]?) -> Void)? = nil,
         onError errorHandler: ((_ error: Error, _ responseCode: Int?, _ responseData: AuthError?) -> Void)? = nil
     )
     {
@@ -124,13 +123,12 @@ public class AuthHttpController {
                 }
                 guard let successHandler = onSuccess else { return }
                 guard
-                    let resultData = data.data,
-                    let result = try? JSONDecoder().decode(T.self, from: resultData)
+                    let result = AuthResult.getAuthResultWithHeadersData(resultData: data.data, headerData: data.response?.headers.dictionary)
                 else {
-                    successHandler(statusCode, nil)
+                    successHandler(statusCode, nil, nil)
                     return
                 }
-                successHandler(statusCode, result)
+                successHandler(statusCode, result, data.response?.headers.dictionary)
             }
     }
     
