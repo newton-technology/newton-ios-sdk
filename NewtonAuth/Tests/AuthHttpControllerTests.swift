@@ -19,9 +19,9 @@ class AuthHttpControllerTests: XCTestCase {
     override func setUpWithError() throws {
         //TODO: move test settings to config file
         url = URL(string: "https://keycloak.newton-technology.ru")
-        clientId = "tezis"
+        clientId = "mobile"
         serviceRealm = "service"
-        phoneNumber = "+79222222222"
+        phoneNumber = "+70000000000"
     }
 
     override func tearDownWithError() throws {
