@@ -47,11 +47,6 @@ class JWTUtils {
             return nil
         }
         return authFlowState
-        /*do {
-            return try JSONDecoder().decode(AuthFlowState.self, from: bodyData)
-        } catch {
-            return nil
-        }*/
     }
     
     /**

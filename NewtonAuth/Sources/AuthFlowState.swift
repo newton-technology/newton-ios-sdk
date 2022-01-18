@@ -44,7 +44,7 @@ public class AuthFlowStateDecodable: Decodable {
     public let maskedEmail: String?
     /// Timestamp when code can be resubmitted
     public let codeCanBeResubmittedTimestampFromData: TimeInterval?
-    /// Timestamp when code can be resubmitted
+    /// Timestamp when code expires
     public let codeExpiresTimestampFromData: TimeInterval?
     
     enum CodingKeys: String, CodingKey {
@@ -61,7 +61,7 @@ public class AuthFlowState: AuthFlowStateDecodable {
     
     /// Timestamp when code can be resubmitted
     public private(set) var codeCanBeResubmittedTimestamp: TimeInterval?
-    /// Timestamp when code can be resubmitted
+    /// Timestamp when code expires
     public private(set) var codeExpiresTimestamp: TimeInterval?
     
     public required init(from decoder: Decoder) throws {
