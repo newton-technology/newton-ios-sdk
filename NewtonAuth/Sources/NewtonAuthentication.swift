@@ -303,15 +303,14 @@ public struct NewtonAuthentication {
         httpController.request(
             url: requestUrl,
             method: .post,
-            resultModel: AuthResult.self,
             headers: getAuthorizationHeaders(authorizationToken: authorizationToken),
             parameters: parameters,
-            onSuccess: { (code, authResult: AuthResult?) in
+            onSuccess: { (code, authResult: AuthResult?, headerData: [AnyHashable: Any]?) in
                 guard let result = authResult else {
                     errorHandler(AuthError(error: .unknownError, errorDescription: nil))
                     return
                 }
-                let flowState = JWTUtils.decodeAuthFlowState(jwtToken: result.accessToken)
+                let flowState = JWTUtils.decodeAuthFlowState(jwtToken: result.accessToken, headerData: headerData)
                 successHandler(result, flowState)
             },
             onError: { error, code, authError in

@@ -35,16 +35,29 @@ class JWTUtils {
      
      - returns JWT decoded into a an Auth flow state object or nil if JWT is not a valid Newton Keycloak service token
      */
-    public static func decodeAuthFlowState(jwtToken jwt: String) -> AuthFlowState? {
+    public static func decodeAuthFlowState(
+        jwtToken jwt: String,
+        headerData: [AnyHashable: Any]?
+    ) -> AuthFlowState? {
         let segments = jwt.components(separatedBy: ".")
         guard let bodyData = base64UrlDecode(segments[1]) else {
             return nil
         }
-        do {
-            return try JSONDecoder().decode(AuthFlowState.self, from: bodyData)
-        } catch {
+        guard let authFlowState = AuthFlowState.getAuthFlowStateWithHeaderData(flowStateData: bodyData, headerData: headerData) else {
             return nil
         }
+        return authFlowState
+    }
+    
+    /**
+     Decode Auth flow state from JWT
+     
+     - parameter jwt: a JSON web token string
+     
+     - returns JWT decoded into a an Auth flow state object or nil if JWT is not a valid Newton Keycloak service token
+     */
+    public static func decodeAuthFlowState(jwtToken jwt: String) -> AuthFlowState? {
+        return decodeAuthFlowState(jwtToken: jwt, headerData: nil)
     }
     
     /**

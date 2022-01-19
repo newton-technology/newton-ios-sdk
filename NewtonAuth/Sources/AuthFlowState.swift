@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftUI
 
 /// Current login flow
 public enum LoginFlow: String, Decodable {
@@ -32,7 +33,7 @@ public enum LoginStep: String, Decodable {
 }
 
 /// Current authorization flow state
-public struct AuthFlowState: Decodable {
+public class AuthFlowStateDecodable: Decodable {
     /// Current login flow
     public let loginFlow: LoginFlow
     /// Current login step
@@ -42,16 +43,49 @@ public struct AuthFlowState: Decodable {
     /// Masked email value
     public let maskedEmail: String?
     /// Timestamp when code can be resubmitted
-    public let codeCanBeResubmittedTimestamp: TimeInterval?
-    /// Timestamp when code can be resubmitted
-    public let codeExpiresTimestamp: TimeInterval?
+    public let codeCanBeResubmittedTimestampFromData: TimeInterval?
+    /// Timestamp when code expires
+    public let codeExpiresTimestampFromData: TimeInterval?
     
     enum CodingKeys: String, CodingKey {
         case loginFlow = "login_flow"
         case loginStep = "login_step"
         case phoneNumber = "phone_number"
         case maskedEmail = "masked_email"
-        case codeCanBeResubmittedTimestamp = "code_can_be_resubmitted_timestamp"
-        case codeExpiresTimestamp = "code_expires_timestamp"
+        case codeCanBeResubmittedTimestampFromData = "code_can_be_resubmitted_timestamp"
+        case codeExpiresTimestampFromData = "code_expires_timestamp"
     }
+}
+
+public class AuthFlowState: AuthFlowStateDecodable {
+    
+    /// Timestamp when code can be resubmitted
+    public private(set) var codeCanBeResubmittedTimestamp: TimeInterval?
+    /// Timestamp when code expires
+    public private(set) var codeExpiresTimestamp: TimeInterval?
+    
+    public required init(from decoder: Decoder) throws {
+        try super.init(from: decoder)
+        codeCanBeResubmittedTimestamp = self.codeCanBeResubmittedTimestampFromData
+        codeExpiresTimestamp = self.codeCanBeResubmittedTimestampFromData
+    }
+    
+    public static func getAuthFlowStateWithHeaderData(flowStateData: Data?, headerData: [AnyHashable: Any]?) -> AuthFlowState?{
+        guard let data = flowStateData else {
+            return nil
+        }
+        do {
+            let authFlowState = try JSONDecoder().decode(AuthFlowState.self, from: data)
+            authFlowState.updateExpirationTimestamps(with: headerData)
+            return authFlowState
+        } catch {
+            return nil
+        }
+    }
+    
+    private func updateExpirationTimestamps(with headerData: [AnyHashable: Any]?) {
+        self.codeExpiresTimestamp = TimestampUtils.getExpirationTimeInSeconds(timestampInSeconds: self.codeExpiresTimestampFromData, httpHeaders: headerData)
+        self.codeCanBeResubmittedTimestamp = TimestampUtils.getExpirationTimeInSeconds(timestampInSeconds: self.codeCanBeResubmittedTimestampFromData, httpHeaders: headerData)
+    }
+    
 }
