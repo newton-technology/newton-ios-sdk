@@ -9,7 +9,7 @@ import Foundation
 
 class TimestampUtils {
     
-    private static let HeaderKeyDate = "Date"
+    private static let HeaderKeyDate = "date"
     
     public static func getExpirationTimeInSeconds(timestampInSeconds: Double?, httpHeaders: [AnyHashable : Any]?) -> Double? {
         guard let ts = timestampInSeconds else {
@@ -22,7 +22,8 @@ class TimestampUtils {
     }
     
     public static func getTimestampInLocalTime(timestamp: Double, headers: [AnyHashable : Any]) -> Double {
-        guard let dateString = headers["Date"] as? String,
+        guard let dateKey = headers.keys.first(where: {($0 as! String).caseInsensitiveCompare(HeaderKeyDate) == .orderedSame }),
+              let dateString = headers[dateKey] as? String,
               let headerDate = getDateFromString(dateString: dateString) else {
             return timestamp
         }
@@ -44,5 +45,4 @@ class TimestampUtils {
         }
         return ts / 1000
     }
-
 }
