@@ -22,7 +22,6 @@ class TimestampUtils {
     }
     
     public static func getTimestampInLocalTime(timestamp: Double, headers: [AnyHashable : Any]) -> Double {
-        
         guard let dateKey = headers.keys.first(where: {($0 as! String).caseInsensitiveCompare(HeaderKeyDate) == .orderedSame }),
               let dateString = headers[dateKey] as? String,
               let headerDate = getDateFromString(dateString: dateString) else {
