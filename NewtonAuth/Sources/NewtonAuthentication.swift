@@ -307,7 +307,7 @@ public struct NewtonAuthentication {
             parameters: parameters,
             onSuccess: { (code, authResult: AuthResult?, headerData: [AnyHashable: Any]?) in
                 guard let result = authResult else {
-                    errorHandler(AuthError(error: .unknownError, errorDescription: nil))
+                    errorHandler(AuthError(error: .unknownError, errorDescription: nil, otpChecksLeft: nil, otpSendsLeft: nil))
                     return
                 }
                 let flowState = JWTUtils.decodeAuthFlowState(jwtToken: result.accessToken, headerData: headerData)
@@ -315,11 +315,11 @@ public struct NewtonAuthentication {
             },
             onError: { error, code, authError in
                 guard let error = authError else {
-                    errorHandler(AuthError(error: .unknownError, errorDescription: nil))
+                    errorHandler(AuthError(error: .unknownError, errorDescription: nil, otpChecksLeft: nil, otpSendsLeft: nil))
                     return
                 }
                 if error.error == .invalidGrant, let token = authorizationToken, JWTUtils.jwtExpired(jwt: token) {
-                    errorHandler(AuthError(error: .tokenExpired, errorDescription: "Auth token expired"))
+                    errorHandler(AuthError(error: .tokenExpired, errorDescription: "Auth token expired", otpChecksLeft: nil, otpSendsLeft: nil))
                     return
                 }
                 errorHandler(error)
