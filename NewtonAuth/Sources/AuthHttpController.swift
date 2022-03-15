@@ -84,7 +84,9 @@ public class AuthHttpController {
                             responseCode: responseCode,
                             responseData: AuthError(
                                 error: .serverError,
-                                errorDescription: "Error: \(data.response?.description ?? "Server error")"
+                                errorDescription: "Error: \(data.response?.description ?? "Server error")",
+                                otpChecksLeft: nil,
+                                otpSendsLeft: nil
                             ),
                             onError: errorHandler)
                         return
@@ -98,7 +100,9 @@ public class AuthHttpController {
                             responseCode: responseCode,
                             responseData: AuthError(
                                 error: .unknownError,
-                                errorDescription: "Error: \(data.response?.description ?? "Unknown error")"
+                                errorDescription: "Error: \(data.response?.description ?? "Unknown error")",
+                                otpChecksLeft: nil,
+                                otpSendsLeft: nil
                             ),
                             onError: errorHandler)
                         return
