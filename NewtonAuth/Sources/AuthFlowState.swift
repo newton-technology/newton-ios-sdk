@@ -46,6 +46,10 @@ public class AuthFlowStateDecodable: Decodable {
     public let codeCanBeResubmittedTimestampFromData: TimeInterval?
     /// Timestamp when code expires
     public let codeExpiresTimestampFromData: TimeInterval?
+    /// OTP checks left
+    public let otpChecksLeft: Int?
+    /// OTP sends left
+    public let otpSendsLeft: Int?
     
     enum CodingKeys: String, CodingKey {
         case loginFlow = "login_flow"
@@ -54,6 +58,8 @@ public class AuthFlowStateDecodable: Decodable {
         case maskedEmail = "masked_email"
         case codeCanBeResubmittedTimestampFromData = "code_can_be_resubmitted_timestamp"
         case codeExpiresTimestampFromData = "code_expires_timestamp"
+        case otpChecksLeft = "otp_checks_left"
+        case otpSendsLeft = "otp_sends_left"
     }
 }
 
