@@ -16,7 +16,7 @@ Pod::Spec.new do |spec|
   #
 
   spec.name         = "NewtonAuth"
-  spec.version      = "0.0.9a"
+  spec.version      = "0.0.9"
   spec.summary      = "Newton Authentication"
 
   # This description is used to generate tags and improve search results.
