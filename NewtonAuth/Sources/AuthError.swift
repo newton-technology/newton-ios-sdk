@@ -67,6 +67,8 @@ public enum AuthErrorCode: String, Decodable {
     case invalidPasswordMinSpecialChars = "invalid_password_min_special_chars"
     /// Password has too few uppercase symbols
     case invalidPasswordMinUpperCaseChars = "invalid_password_min_upper_case_chars"
+    /// Saved pin is invalid
+    case invalidPin = "invalid_pin"
 }
 
 extension AuthErrorCode {

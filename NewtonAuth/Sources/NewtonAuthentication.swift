@@ -236,22 +236,70 @@ public struct NewtonAuthentication {
             onError: errorHandler
         )
     }
-
-    public func refreshToken(
+    
+    public func refreshAccessToken(
         refreshToken: String,
+        pin: String?,
         onSuccess successHandler: @escaping ((_ authResult: AuthResult) -> Void),
         onError errorHandler: @escaping ((_ error: AuthError) -> Void)
     ) {
-        let parameters = [
+        var parameters = [
             "client_id": clientId,
             "grant_type": "refresh_token",
             "refresh_token": refreshToken
         ]
+        if let pinCode = pin {
+            parameters["pin"] = pinCode
+        }
         return requestMainToken(
             parameters: parameters,
             authorizationToken: nil,
             onSuccess: successHandler,
             onError: errorHandler
+        )
+    }
+
+    public func refreshAccessToken(
+        refreshToken: String,
+        onSuccess successHandler: @escaping ((_ authResult: AuthResult) -> Void),
+        onError errorHandler: @escaping ((_ error: AuthError) -> Void)
+    ) {
+        refreshAccessToken(
+            refreshToken: refreshToken,
+            pin: nil,
+            onSuccess: successHandler,
+            onError: errorHandler
+        )
+    }
+    
+    public func setPin(
+        pin: String,
+        authorizationToken: String,
+        onSuccess successHandler: @escaping (() -> Void),
+        onError errorHandler:  @escaping ((_ error: AuthError) -> Void)
+    ) {
+        
+        let httpController = AuthHttpController.instance
+        
+        guard let requestUrl = URL(string: "/auth/realms/\(realm)/pin", relativeTo: url) else {
+            return
+        }
+        let parameters = ["pin": pin]
+        httpController.requestSimple(
+            url: requestUrl,
+            method: .get,
+            headers: getAuthorizationHeaders(authorizationToken: authorizationToken),
+            parameters: parameters,
+            onSuccess: {_ in
+                successHandler()
+            },
+            onError: { error, code, authError in
+                guard let error = authError else {
+                    errorHandler(AuthError(error: .unknownError, errorDescription: nil, otpChecksLeft: nil, otpSendsLeft: nil))
+                    return
+                }
+                errorHandler(error)
+            }
         )
     }
 

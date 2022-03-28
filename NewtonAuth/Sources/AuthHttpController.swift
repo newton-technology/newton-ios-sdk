@@ -136,6 +136,35 @@ public class AuthHttpController {
             }
     }
     
+    public func requestSimple(
+        url: URL,
+        method: HTTPMethod,
+        headers: [String: String]? = nil,
+        parameters: Parameters? = nil,
+        onSuccess: ((_ responseCode: Int?) -> Void)? = nil,
+        onError errorHandler: ((_ error: Error, _ responseCode: Int?, _ responseData: AuthError?) -> Void)? = nil
+    ) {
+        sessionManager
+            .request(
+                url,
+                method: method,
+                parameters: parameters,
+                headers: HTTPHeaders(headers ?? [:]),
+                interceptor: AuthRequestInterceptor(retryCount: AuthHttpController.defaultRetryCount, retryDelay: AuthHttpController.defaultRetryDelay)
+            )
+            .response {data in
+                let responseCode = data.response?.statusCode
+                
+                if let error = data.error {
+                    self.onError(error: error, responseCode: responseCode, responseData: nil, onError: errorHandler)
+                    return
+                }
+                guard let successHandler = onSuccess else { return }
+                
+                successHandler(responseCode)
+            }
+    }
+    
     private func onError(
         error: Error,
         responseCode: Int?,
